@@ -16,19 +16,9 @@ function App() {
 
   const fetchData = async () => {
     setLoading(true);
-    // axios
-    //   .get('https://jsonplaceholder.typicode.com/posts')
-    //   .then((res) => {
-    //     setData(res?.data);
-    //   })
-    //   .catch((err) => console.log(err))
-    //   .finally(() => {
-    //     setLoading(false);
-    //     setRefetchData(false);
-    //   });
     axios({
       method: 'GET',
-      url: 'https://jsonplaceholder.typicode.com/posts',
+      url: ' http://localhost:3001/posts',
     })
       .then((res) => {
         setData(res?.data);
@@ -58,13 +48,40 @@ function App() {
     }
   }, [refetchData]);
 
+  const handleDelete = async (id) => {
+    try {
+      await axios({
+        method: 'DELETE',
+        url: ` http://localhost:3001/posts/${id}`,
+      });
+      setRefetchData(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="App">
       <button onClick={() => setRefetchData(true)}>refetch</button>
+      <h1>DATA TAMU</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
-        data?.map((item) => <h6 key={item.id}>{item.title}</h6>)
+        data?.map((item) => (
+          <>
+            <h6 key={item.id}>
+              {item.title}
+              <button
+                style={{
+                  marginLeft: '10px',
+                }}
+                onClick={() => handleDelete(item.id)}
+              >
+                delete
+              </button>
+            </h6>
+          </>
+        ))
       )}
     </div>
   );
