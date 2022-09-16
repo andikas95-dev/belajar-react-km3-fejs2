@@ -1,61 +1,23 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Header from './partials/Header/Header';
-
-// export default function Home() {
-//   const [nama, setNama] = React.useState();
-//   const [reset, setReset] = React.useState(false);
-
-//   useEffect(() => {
-//     setNama('Dinda');
-//   }, []);
-
-//   useEffect(() => {
-//     if (reset) {
-//       setNama('Paimin');
-//       setReset(false);
-//     }
-//   }, [reset]);
-
-//   return (
-//     <div
-//       style={{
-//         textAlign: 'center',
-//       }}
-//     >
-//       {JSON.stringify(reset)}
-//       <Header nama={nama} />
-//       <input
-//         placeholder="tolong diisi"
-//         value={nama}
-//         onChange={(e) => setNama(e.target.value)}
-//       />
-//       <button onClick={() => setReset(!reset)}>reset</button>
-//       <p>Ini Home</p>
-//       <Link to="/about">
-//         <p>ke halaman about</p>
-//       </Link>
-//     </div>
-//   );
-// }
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import './App.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [refetchData, setRefetchData] = useState(true);
+  const [search, setSearch] = useState('');
 
+  const location = useLocation();
   const navigate = useNavigate();
 
   const fetchData = async () => {
     setLoading(true);
+
+    // const param = new URLSearchParams(params).toString();
     axios({
       method: 'GET',
-      url: ' http://localhost:3001/posts',
+      url: `https://fake-api-coba.herokuapp.com/users${location.search}`,
     })
       .then((res) => {
         setData(res?.data);
@@ -83,13 +45,13 @@ function App() {
     if (refetchData) {
       fetchData();
     }
-  }, [refetchData]);
+  }, [refetchData, location.search]);
 
   const handleDelete = async (id) => {
     try {
       await axios({
         method: 'DELETE',
-        url: `http://localhost:3001/posts/${id}`,
+        url: `https://fake-api-coba.herokuapp.com/users/${id}`,
       });
       setRefetchData(true);
     } catch (error) {
@@ -101,13 +63,34 @@ function App() {
     <div className="App">
       <button onClick={() => setRefetchData(true)}>refetch</button>
       <h1>DATA TAMU</h1>
+
+      <input
+        value={search}
+        onChange={(e) => {
+          e.preventDefault();
+          setSearch(e.target.value);
+        }}
+      />
+      <button
+        onClick={() => {
+          if (search) {
+            navigate(`?first_name=${search}`);
+          } else {
+            navigate(`/`);
+          }
+          setRefetchData(true);
+        }}
+      >
+        Search
+      </button>
+
       {loading ? (
         <p>Loading...</p>
       ) : (
         data?.map((item) => (
           <>
-            <h6 key={item.id}>
-              {item.title}
+            <h2 key={item.id}>
+              {item.first_name}
               <button
                 style={{
                   marginLeft: '10px',
@@ -124,7 +107,7 @@ function App() {
               >
                 delete
               </button>
-            </h6>
+            </h2>
           </>
         ))
       )}

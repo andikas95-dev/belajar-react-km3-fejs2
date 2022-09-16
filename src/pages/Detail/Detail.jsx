@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import styles from './detail.module.css';
 
 export default function Detail() {
   const params = useParams();
@@ -29,6 +30,8 @@ export default function Detail() {
           e.preventDefault();
           navigate(-1);
         }}
+        className={styles.button}
+        id={styles.buttonId}
       >
         back
       </button>
