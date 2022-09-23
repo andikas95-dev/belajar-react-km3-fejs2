@@ -48,6 +48,7 @@ function App() {
   }, [refetchData, location.search]);
 
   const handleDelete = async (id) => {
+    setData(data.filter((item) => item.id !== id));
     try {
       await axios({
         method: 'DELETE',
